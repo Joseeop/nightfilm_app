@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nightfilm/presentation/providers/movies/movies_providers.dart';
+import 'package:nightfilm/presentation/widgets/widgets.dart';
 
 
 
@@ -47,15 +48,27 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
     if(nowPlayingMovies.isEmpty) return const CircularProgressIndicator();
 
-    return ListView.builder(
-      itemCount: nowPlayingMovies.length,
-      itemBuilder: (context,index){
-        final movie=nowPlayingMovies[index];
-        return ListTile(
-          title: Text(movie.title),
-          subtitle: Text(movie.overview),
-        );
-      } );
+    return Column(
+      
+
+
+      children: [
+        CustomAppbar(),
+        MoviesSlidehow(movies: nowPlayingMovies),
+        
+      ],
+    );
   }
 }
 
+// Expanded(
+        //   child: ListView.builder(
+        //       itemCount: nowPlayingMovies.length,
+        //       itemBuilder: (context,index){
+        //   final movie=nowPlayingMovies[index];
+        //   return ListTile(
+        //     title: Text(movie.title),
+        //     //subtitle: Text(movie.overview),
+        //   );
+        //       } ),
+        // )
