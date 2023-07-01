@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:nightfilm/domain/entities/movie.dart';
@@ -15,11 +16,20 @@ class MoviesSlidehow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return SizedBox(
       height: 210,
       //double.infinity hace que tome todo el ancho posible
       width: double.infinity,
+      //Widget del paquete card_swiper que nos ayuda a manejar el swipe de las slides.
       child: Swiper(
+        //Coloca los puntitos de referencia de las slides.
+        pagination: SwiperPagination(
+          margin: const EdgeInsets.only(top:0 ),
+          builder: DotSwiperPaginationBuilder(
+            activeColor: colors.primary,
+            color: colors.secondary )
+        ),
         viewportFraction: 0.8,
         scale: 0.9,
         autoplay: true,
@@ -65,7 +75,17 @@ class _Slide extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           child: Image.network(
             movie.backdropPath,
-            fit: BoxFit.cover
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress != null){
+                return const DecoratedBox(
+                  decoration: BoxDecoration(color: Colors.black12)
+                  );
+              }
+
+              //FadeIn de animate_do simula una carga reciente de la imagen.
+              return FadeIn(child : child);
+            },
           )
           )
           ),
