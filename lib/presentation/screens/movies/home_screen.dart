@@ -56,7 +56,7 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     final topRatedMovies = ref.watch(topRatedMoviesProvider);
     final upComingMovies = ref.watch(upComingMoviesProvider);
 
-    //if(moviesSlideshow.isEmpty) return const CircularProgressIndicator();
+    return const FullScreenLoader();
 
 //!Envolvemos el Column en SingleChildScrollView este widget que nos sirve para hacer scroll vertical y que no se desborde la pantalla.
     return CustomScrollView(
