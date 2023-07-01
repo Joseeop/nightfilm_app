@@ -49,14 +49,19 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final nowPlayingMovies= ref.watch(nowPlayingMoviesProvider);
 
+    final initialLoading = ref.watch(initialLoadingProvider);
+
+    if(initialLoading) return const FullScreenLoader();
+    
     final moviesSlideshow = ref.watch(moviesSlideshowProvider);
+
+    final nowPlayingMovies= ref.watch(nowPlayingMoviesProvider);
     final popularMovies = ref.watch(popularMoviesProvider);
     final topRatedMovies = ref.watch(topRatedMoviesProvider);
     final upComingMovies = ref.watch(upComingMoviesProvider);
 
-    return const FullScreenLoader();
+    
 
 //!Envolvemos el Column en SingleChildScrollView este widget que nos sirve para hacer scroll vertical y que no se desborde la pantalla.
     return CustomScrollView(
