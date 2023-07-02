@@ -7,6 +7,7 @@ import 'package:nightfilm/config/constants/environment.dart';
 import 'package:nightfilm/domain/datasources/movies_datasource.dart';
 import 'package:nightfilm/domain/entities/movie.dart';
 import 'package:nightfilm/infrastructure/mappers/movie_mapper.dart';
+import 'package:nightfilm/infrastructure/models/moviedb/movie_details.dart';
 import 'package:nightfilm/infrastructure/models/moviedb/moviedb_response.dart';
 
 //!CLIENTE DE PETICIONES HTTP PARA THEMOVIEDB
@@ -69,4 +70,20 @@ class MoviedbDatasource extends MoviesDatasource{
       } );
        return _jsonToMovies(response.data);
 }
+
+  @override
+  Future<Movie> getMovieById(String id) async {
+    final response = await dio.get('/movie/$id');
+
+    if(response.statusCode != 200) throw Exception('Movie with id: $id not found');
+
+    final movieDetails= MovieDetails.fromJson(response.data);
+    final Movie movie= MovieMapper.movieDetailsToEntity(movieDetails);
+
+    return movie;
+      
+
+
+
+  }
 }
