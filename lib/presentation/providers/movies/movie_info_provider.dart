@@ -7,7 +7,7 @@ import 'package:nightfilm/presentation/providers/movies/movies_repository_provid
 import '../../../domain/entities/movie.dart';
 
 
-final movieInfoProvider= StateNotifierProvider((ref){
+final movieInfoProvider= StateNotifierProvider<MoviesMapNotifier,Map<String,Movie>>((ref){
   final movieRepository = ref.watch(movieRepositoryProvider);
 return MoviesMapNotifier(getMovie: movieRepository.getMovieById);
 });
@@ -25,7 +25,7 @@ MoviesMapNotifier({
 
 Future<void> loadMovie(String movieId) async{
   if( state[movieId]!=null) return;
-  print ('Realizando petición http');
+  //print ('Realizando petición http');
 
   final movie = await getMovie(movieId);
 
