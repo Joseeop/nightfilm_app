@@ -1,4 +1,5 @@
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nightfilm/domain/entities/movie.dart';
@@ -149,13 +150,15 @@ class _ActorsByMovie extends ConsumerWidget {
               children: [
 
                 //actor
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.network(
-                    actor.profilePath,
-                    height: 180,
-                    width: 135,
-                    fit: BoxFit.cover
+                FadeInRight(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      actor.profilePath,
+                      height: 180,
+                      width: 135,
+                      fit: BoxFit.cover
+                    ),
                   ),
                 ),
 
@@ -199,7 +202,12 @@ class _CustomSliverAppbar extends StatelessWidget {
           children: [
             SizedBox.expand(
               child: Image.network(movie.posterPath,
-              fit:BoxFit.cover),
+              fit:BoxFit.cover,
+              //! Comprobamos si la imagen está cargada, sino ponemos circulo de carga y después añadimos FadeIn para que la carga no sea brusca.
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress!=null) return const SizedBox();
+                return FadeIn(child: child);
+              },),
              
             ),
             //!GRADIENTE PARA LEER TEXTOS QUE COINCIDAN EN COLOR CON LA IMAGEN DE FONDO.(BLANCO)

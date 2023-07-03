@@ -1,7 +1,5 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nightfilm/infrastructure/repositories/movie_repository_impl.dart';
-import 'package:nightfilm/presentation/providers/movies/movies_providers.dart';
 import 'package:nightfilm/presentation/providers/movies/movies_repository_provider.dart';
 
 import '../../../domain/entities/movie.dart';
