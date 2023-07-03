@@ -1,5 +1,7 @@
 
 
+import 'dart:async';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:nightfilm/config/helpers/human_formats.dart';
@@ -11,9 +13,23 @@ typedef SearchMoviesCallback = Future <List<Movie>> Function (String query);
 class SearchMovieDelegate extends SearchDelegate<Movie?>{
 
   final SearchMoviesCallback searchMovies;
+  //Podemos tener múltiples listeners
+  StreamController <List<Movie>> debouncedMovies= StreamController.broadcast();
+  Timer? _debounceTimer;
 
   SearchMovieDelegate({
     required this.searchMovies});
+
+
+    void _onQueryChaned(String query){
+
+      print('Cambió el query');
+        if (_debounceTimer?.isActive ?? false)_debounceTimer!.cancel();
+        _debounceTimer= Timer(const Duration(microseconds: 500), (){
+          // TODO: buscar películas y emitir al stream
+          print('Buscando películas');
+        });
+    }
 
 //Sobreescribimos el método searchFieldLabel para personalizar el hint de búsqueda.
   @override
@@ -64,10 +80,14 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{
 //Defininimos sugerencias
   @override
   Widget buildSuggestions(BuildContext context) {
+    _onQueryChaned(query);
    
-   return FutureBuilder(
-    future : searchMovies(query),
+   return StreamBuilder(
+    stream: debouncedMovies.stream,
     builder:(context, snapshot) {
+
+     //! Revisar peticiones print('Realizando petición');
+
       final  movies = snapshot.data ?? [];
       return ListView.builder(
         itemCount: movies.length,
