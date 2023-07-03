@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nightfilm/domain/entities/movie.dart';
 import 'package:nightfilm/domain/repositories/movies_repositories.dart';
 import 'package:nightfilm/presentation/delegates/search_movie_delegate.dart';
 import 'package:nightfilm/presentation/providers/providers.dart';
@@ -29,16 +31,24 @@ class CustomAppbar extends ConsumerWidget {
              //widget que ocupe todo el espacio posible
              const Spacer(),
              //!Usamos SearchDelegate para hacer búsqueda, delegate será el encargado de realizar la búsqueda
-             IconButton(onPressed: (){
+             IconButton(onPressed: () {
 
               final movieRepository = ref.read(movieRepositoryProvider);
 
-                showSearch(
+                showSearch<Movie?>(
                   context: context, 
                   delegate: SearchMovieDelegate(
                     searchMovies: movieRepository.searchMovie
                   )
-                  );
+                  ).then((movie) {
+                    if(movie == null) return;
+                      context.push('/movie/${movie.id}');   
+                  });
+                  
+                      
+                  
+                  
+                 
              }
              , icon: const Icon(Icons.search_outlined))
           ],
