@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nightfilm/domain/repositories/movies_repositories.dart';
+import 'package:nightfilm/presentation/delegates/search_movie_delegate.dart';
+import 'package:nightfilm/presentation/providers/providers.dart';
 
 
 
-class CustomAppbar extends StatelessWidget {
+class CustomAppbar extends ConsumerWidget {
   const CustomAppbar({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
 
     final colors = Theme.of(context).colorScheme;
     final titleStyle= Theme.of(context).textTheme.titleMedium;
@@ -24,8 +28,17 @@ class CustomAppbar extends StatelessWidget {
              Text('Nightfilm',style: titleStyle),
              //widget que ocupe todo el espacio posible
              const Spacer(),
+             //!Usamos SearchDelegate para hacer búsqueda, delegate será el encargado de realizar la búsqueda
              IconButton(onPressed: (){
 
+              final movieRepository = ref.read(movieRepositoryProvider);
+
+                showSearch(
+                  context: context, 
+                  delegate: SearchMovieDelegate(
+                    searchMovies: movieRepository.searchMovie
+                  )
+                  );
              }
              , icon: const Icon(Icons.search_outlined))
           ],
