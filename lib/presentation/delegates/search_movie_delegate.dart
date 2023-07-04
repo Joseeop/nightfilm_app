@@ -20,14 +20,28 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{
   SearchMovieDelegate({
     required this.searchMovies});
 
+//Función para cerrar el delegate
+    void clearStreams(){
+      debouncedMovies.close();
+    }
 
-    void _onQueryChaned(String query){
+
+    void _onQueryChaned(String query) {
 
       print('Cambió el query');
         if (_debounceTimer?.isActive ?? false)_debounceTimer!.cancel();
-        _debounceTimer= Timer(const Duration(microseconds: 500), (){
-          // TODO: buscar películas y emitir al stream
-          print('Buscando películas');
+        //Esperamos a que el usuario deje de escribir en la barra de búsqueda para realizar peticiones y que no lo haga con cada letra que escriba.
+        _debounceTimer= Timer(const Duration(microseconds: 500), () async{
+          //Evaluamos si el query está vacío, si lo está mandamos una lista vacía.
+         if(query.isEmpty){
+          debouncedMovies.add([]);
+          return;
+         }
+
+         //Si ya tenemos valor en el query:
+
+         final movies = await searchMovies(query);
+         debouncedMovies.add(movies);
         });
     }
 
@@ -65,7 +79,10 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{
   @override
   Widget? buildLeading(BuildContext context) {
     return
-      IconButton(onPressed: () => close(context, null) ,
+      IconButton(onPressed: () => {
+        clearStreams(),
+        close(context, null)
+        } ,
        icon: const Icon(Icons.arrow_back_rounded));
     
   }
@@ -93,7 +110,10 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{
         itemCount: movies.length,
         itemBuilder: (context, index) => _MovieItem( 
           movie : movies[index],
-          onMovieSelected: close,)
+          onMovieSelected: (context,movie){
+            clearStreams();
+            close(context,movie);
+            })
         
 
         
