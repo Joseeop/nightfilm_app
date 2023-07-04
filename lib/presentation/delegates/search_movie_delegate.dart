@@ -13,12 +13,16 @@ typedef SearchMoviesCallback = Future <List<Movie>> Function (String query);
 class SearchMovieDelegate extends SearchDelegate<Movie?>{
 
   final SearchMoviesCallback searchMovies;
+  final List <Movie> initialMovies;
   //Podemos tener múltiples listeners
   StreamController <List<Movie>> debouncedMovies= StreamController.broadcast();
   Timer? _debounceTimer;
+  
 
   SearchMovieDelegate({
-    required this.searchMovies});
+    required this.searchMovies,
+    required this.initialMovies,
+    });
 
 //Función para cerrar el delegate
     void clearStreams(){
@@ -32,12 +36,7 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{
         if (_debounceTimer?.isActive ?? false)_debounceTimer!.cancel();
         //Esperamos a que el usuario deje de escribir en la barra de búsqueda para realizar peticiones y que no lo haga con cada letra que escriba.
         _debounceTimer= Timer(const Duration(microseconds: 500), () async{
-          //Evaluamos si el query está vacío, si lo está mandamos una lista vacía.
-         if(query.isEmpty){
-          debouncedMovies.add([]);
-          return;
-         }
-
+    
          //Si ya tenemos valor en el query:
 
          final movies = await searchMovies(query);
@@ -100,6 +99,7 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{
     _onQueryChaned(query);
    
    return StreamBuilder(
+    initialData: initialMovies,
     stream: debouncedMovies.stream,
     builder:(context, snapshot) {
 
