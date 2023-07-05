@@ -6,14 +6,18 @@ import 'package:go_router/go_router.dart';
 import 'package:nightfilm/presentation/screens/screens.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/home/0',
   routes:[
 
 
     
-    GoRoute(path: '/',
+    GoRoute(
+    path: '/home/:page',
     name:HomeScreen.name,
-    builder: (context, state) => const HomeScreen(),
+    builder: (context, state) {
+      final pageIndex = state.pathParameters['page'] ?? '0';
+      return  HomeScreen(pageIndex: int.parse(pageIndex) ,);
+    },
     //Hacemos rutas hijas para no perder el botón atrás de navegación.
     routes: [
       GoRoute(path: 'movie/:id',
@@ -28,6 +32,10 @@ final appRouter = GoRouter(
     
     ),
     
+    GoRoute(
+      path: '/',
+      //Cuando no necesitamos argumentos ponemos _,__
+      redirect: (_, __) => '/home/0')
     
 
 
