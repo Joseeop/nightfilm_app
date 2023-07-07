@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nightfilm/domain/entities/movie.dart';
+import 'package:nightfilm/domain/repositories/local_storage_repository.dart';
 import 'package:nightfilm/presentation/providers/movies/movie_info_provider.dart';
 import 'package:nightfilm/presentation/providers/providers.dart';
 
@@ -178,6 +179,21 @@ class _ActorsByMovie extends ConsumerWidget {
   }
 }
 
+//Usamos .family para poder recibir un argumento(movieId) y comprobar si está en favoritos
+
+final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId){
+
+  //Consulta a BD
+  final localStorageRepository = ref.watch(localStorageRepositoryProvider);
+
+  return localStorageRepository.isMovieFavorite(movieId); //bool Si está en favoritos
+
+
+});
+
+
+
+
 class _CustomSliverAppbar extends ConsumerWidget {
   final Movie movie;
 
@@ -185,17 +201,28 @@ class _CustomSliverAppbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //Instancia del provider, cogemos la referencia del isFavoriteProvider
+    final AsyncValue isFavoriteFuture = ref.watch(isFavoriteProvider(movie.id));
     //Tomamos el tamaño de la pantalla en la variable size.
     final size = MediaQuery.of(context).size;
     return SliverAppBar(
       actions: [
         IconButton(
-          onPressed: () {
+          onPressed: () async{
             ref.watch(localStorageRepositoryProvider)
             .toggleFavorite(movie);
+            //Hay que darle un peque tiempo de espera antes de invalidar la función, sino el funcionamiento del favoriteButton puede fallar
+            await Future.delayed(const Duration(milliseconds: 100));
+            //Invalidamos para que vuelva a hacer la petición
+            ref.invalidate(isFavoriteProvider(movie.id));
           },
-          icon: const Icon(Icons.favorite_border),
-          //icon: const Icon(Icons.favorite_rounded, color: Colors.red)
+          icon: isFavoriteFuture.when(
+            data: (isFavorite) => isFavorite
+            ?   const Icon(Icons.favorite_rounded, color: Colors.red)
+            : const Icon(Icons.favorite_border),
+            error: (_,__) => throw UnimplementedError(), 
+            loading: () => const CircularProgressIndicator(strokeWidth: 2,))
+         
         )
       ],
       backgroundColor: Colors.black,
