@@ -8,3 +8,6 @@ export 'package:nightfilm/presentation/widgets/shared/custom_appbar.dart';
 
 export 'package:nightfilm/presentation/widgets/shared/custom_bottom_navigation.dart';
 
+export 'movies/movie_masonry.dart';
+
+export 'movies/movie_poster_link.dart';

@@ -209,10 +209,9 @@ class _CustomSliverAppbar extends ConsumerWidget {
       actions: [
         IconButton(
           onPressed: () async{
-            ref.watch(localStorageRepositoryProvider)
-            .toggleFavorite(movie);
+            await ref.read(favoriteMoviesProvider.notifier).toggleFavorite(movie);
             //Hay que darle un peque tiempo de espera antes de invalidar la función, sino el funcionamiento del favoriteButton puede fallar
-            await Future.delayed(const Duration(milliseconds: 100));
+            //await Future.delayed(const Duration(milliseconds: 100));
             //Invalidamos para que vuelva a hacer la petición
             ref.invalidate(isFavoriteProvider(movie.id));
           },
